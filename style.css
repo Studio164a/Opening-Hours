@@ -1,0 +1,4 @@
+/* Opening hours widget default styling
+================================================== */
+.osfa_opening_hours_widget dt { float: left; clear: left; }
+.osfa_opening_hours_widget dd {	float: right; }
