@@ -2,3 +2,9 @@
 ================================================== */
 .osfa_opening_hours_widget dt { float: left; clear: left; }
 .osfa_opening_hours_widget dd {	float: right; }
+
+/* Clearfix */
+.osfa_opening_hours_widget dl:before,
+.osfa_opening_hours_widget dl:after { content: " "; display: table; }
+.osfa_opening_hours_widget dl:after { clear: both; }
+.osfa_opening_hours_widget dl { *zoom: 1; } 

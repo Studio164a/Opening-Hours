@@ -34,54 +34,17 @@ class OSFA_Opening_Hours {
      * @access private
      */
     private function __construct() {
+        // echo memory_get_usage();
+        // die;
     	require_once('widget.php');
 
     	// Set up multi-lingualism
     	load_plugin_textdomain( 'osfa_opening_hours', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
-    	// Set up the admin options page
-    	add_action( 'admin_menu', function() {
-    		add_options_page( 
-				__( 'Opening Hours', 'osfa_opening_hours' ), 
-				__( 'Opening Hours', 'osfa_opening_hours' ),
-				'activate_plugins',
-				'osfa-opening-hours',
-				array( 'OSFA_Opening_Hours', 'options_page' ) 
-			);
-    	});
-
-    	// Create the settings settings
-    	add_action( 'admin_init', function() {
-
-		 	// Add the section to reading settings so we can add our
-		 	// fields to it
-		 	add_settings_section('osfa_opening_hours_main',
-				__( 'Opening hours', 'osfa_opening_hours' ),
-				function() {},
-				'osfa-opening-hours');
-		 	
-		 	// Add the field with the names and function to use for our new
-		 	// settings, put it in our new section
-		 	add_settings_field('osfa_opening_hours_hours',
-				'',
-				array( 'OSFA_Opening_Hours', 'hours_setting' ),
-				'osfa-opening-hours',
-				'osfa_opening_hours_main');
-		 	
-		 	// Register our setting so that $_POST handling is done for us and
-		 	// our callback function just has to echo the <input>
-		 	register_setting('osfa-opening-hours', 'osfa_opening_hours');		 	
-    	});
-
-    	add_action( 'widgets_init', function() {
-    		register_widget( 'OSFA_Opening_Hours_Widget' );
-    	});
-
-    	// Load the stylesheet
-    	add_action( 'wp_enqueue_scripts', function() {
-    		wp_register_script( 'osfa_opening_hours', plugins_url( 'style.css', __FILE__ ));
-    		wp_enqueue_scripts( 'osfa_opening_hours' );
-    	});
+    	add_action( 'admin_menu', array( &$this, 'admin_menu' ));
+    	add_action( 'admin_init', array( &$this, 'admin_init' ));
+    	add_action( 'widgets_init', array( &$this, 'widgets_init' ));
+    	add_action( 'wp_enqueue_scripts', array( &$this, 'wp_enqueue_scripts') );
     }
 
     /**
@@ -94,7 +57,69 @@ class OSFA_Opening_Hours {
             self::$instance = new OSFA_Opening_Hours();
         }
         return self::$instance;
-    }    
+    }   
+
+    /** 
+     * Admin menu hook
+     * 
+     * @return void
+     */
+    public function admin_menu() {
+        add_options_page( 
+            __( 'Opening Hours', 'osfa_opening_hours' ), 
+            __( 'Opening Hours', 'osfa_opening_hours' ),
+            'activate_plugins',
+            'osfa-opening-hours',
+            array( 'OSFA_Opening_Hours', 'options_page' ) 
+        );
+    }
+
+    /**
+     * Admin init hook
+     * 
+     * @return void
+     */
+    public function admin_init() {
+        add_settings_section('osfa_opening_hours_main',
+            __( 'Opening hours', 'osfa_opening_hours' ),
+            create_function('', 'return;'),
+            'osfa-opening-hours');
+        
+        add_settings_field('osfa_opening_hours_hours',
+            __( 'Hours by day', 'osfa_opening_hours' ),
+            array( 'OSFA_Opening_Hours', 'hours_setting' ),
+            'osfa-opening-hours',
+            'osfa_opening_hours_main');
+        
+        add_settings_field('osfa_opening_hours_comment', 
+            'Extra comment', 
+            array( 'OSFA_Opening_Hours', 'extra_comment_setting' ), 
+            'osfa-opening-hours', 
+            'osfa_opening_hours_main' );
+
+        // Register our setting so that $_POST handling is done for us and
+        // our callback function just has to echo the <input>
+        register_setting('osfa-opening-hours', 'osfa_opening_hours');           
+    }  
+
+    /**
+     * Run on widgets_init hook
+     * 
+     * @return void
+     */
+    public function widgets_init() {
+        register_widget( 'OSFA_Opening_Hours_Widget' );
+    }
+
+    /** 
+     * Enqueue scripts & stylesheets
+     * 
+     * @return void
+     */
+    public function wp_enqueue_scripts() {
+        wp_register_style( 'osfa_opening_hours', plugins_url( 'style.css', __FILE__ ));
+        wp_enqueue_style( 'osfa_opening_hours' );
+    }
 
     /**
      * Get value for setting with key
@@ -185,11 +210,10 @@ class OSFA_Opening_Hours {
     }
 
     public function extra_comment_setting() {
-    	$value = self::get_setting('comment') ? self::get_setting('comment') : '';
+    	$value = self::get_plugin_setting('comment') ? self::get_plugin_setting('comment') : '';
     	?>
-    	<p>
-    		<label for="osfa_opening_hours_extra_comment"><?php _e( 'Additional comments:', 'osfa_opening_hours' ) ?></label>
-    		<textarea id="osfa_opening_hours_extra_comment" name="osfa_opening_hours[comment]"><?php echo $value ?></textarea>
+    	<p>    		
+    		<textarea id="osfa_opening_hours_extra_comment" name="osfa_opening_hours[comment]" cols="30" rows="6"><?php echo $value ?></textarea>
     	</p>
     	<?php
     }
