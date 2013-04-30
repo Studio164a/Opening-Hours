@@ -105,5 +105,8 @@ class OSFA_Opening_Hours_Widget extends WP_Widget {
 			endif;
 
 		endif;
+
+		// End the widget
+		echo $after_widget;
 	}
 }
