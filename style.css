@@ -1,7 +1,7 @@
 /* Opening hours widget default styling
 ================================================== */
 .osfa_opening_hours_widget dt { float: left; clear: left; }
-.osfa_opening_hours_widget dd {	float: right; }
+.osfa_opening_hours_widget dd {	float: right; margin-bottom: 0; }
 
 /* Clearfix */
 .osfa_opening_hours_widget dl:before,
