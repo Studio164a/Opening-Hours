@@ -29,13 +29,11 @@ class OSFA_Opening_Hours {
     private static $settings = null;
 	
     /**
-     * Create object. OSFA_Flexslider instance should be retrieved through OSFA_Flexslider::get_instance() method.
+     * Create object. OSFA_Entree instance should be retrieved through OSFA_Entree::get_instance() method.
      *
      * @access private
      */
     private function __construct() {
-        // echo memory_get_usage();
-        // die;
     	require_once('widget.php');
 
     	// Set up multi-lingualism
@@ -50,7 +48,7 @@ class OSFA_Opening_Hours {
     /**
      * Retrieve object instance
      *
-     * @return OSFA_Flexslider
+     * @return OSFA_Entree
      */
     public static function get_instance() {
         if ( is_null(self::$instance) ) {
@@ -99,7 +97,7 @@ class OSFA_Opening_Hours {
 
         // Register our setting so that $_POST handling is done for us and
         // our callback function just has to echo the <input>
-        register_setting('osfa-opening-hours', 'osfa_opening_hours');           
+        register_setting('osfa-opening-hours', 'osfa_opening_hours');
     }  
 
     /**
